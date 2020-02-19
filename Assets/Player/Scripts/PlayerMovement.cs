@@ -13,11 +13,14 @@ public class PlayerMovement : MonoBehaviour
     [Range(1, 25)]
     public int jumpChecks;
     public float distanceToJump;
-    public bool showRays;
     public float inputHoldTime;
+
+    [Header("Debug Options")]
+    public bool showRays;
 
     // Component References
     private Rigidbody2D rb;
+    private Animator anim;
 
     // Input Trackers
     private PlayerInputActions input;
@@ -35,13 +38,26 @@ public class PlayerMovement : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
 
         // Setup for the new Input System
         input = new PlayerInputActions();
-        input.Game.Move.performed += ctx => movementInput[0] = ctx.ReadValue<float>();
-        input.Game.Move.canceled += ctx => movementInput[0] = ctx.ReadValue<float>();
+        input.Game.Move.performed += MovePerformed;
+        input.Game.Move.canceled += MoveCancelled;
         input.Game.Jump.performed += ctx => jumpInput = ctx.ReadValue<float>();
         input.Game.Jump.canceled += JumpCancelled;
+    }
+
+    private void MovePerformed(InputAction.CallbackContext ctx)
+    {
+        movementInput[0] = ctx.ReadValue<float>();
+        anim.SetBool("Move", true);
+    }
+
+    private void MoveCancelled(InputAction.CallbackContext ctx)
+    {
+        movementInput[0] = ctx.ReadValue<float>();
+        anim.SetBool("Move", false);
     }
 
     private void JumpCancelled(InputAction.CallbackContext ctx)
