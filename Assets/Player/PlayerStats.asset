@@ -16,5 +16,6 @@ MonoBehaviour:
   jumpSpeed: 8
   attackCooldown: 10
   jumpMoveSpeedReductionModifier: 0.5
+  hasWeapon: 1
   doubleJump: 1
   doubleJumpSpeed: 7

@@ -12,6 +12,7 @@ public class PlayerStats : ScriptableObject {
     public float jumpMoveSpeedReductionModifier;
 
     [Header("Upgrades")]
+    public bool hasWeapon;
     public bool doubleJump;
 
     [Header("Upgrade Stats")]

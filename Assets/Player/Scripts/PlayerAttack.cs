@@ -16,52 +16,41 @@ public class PlayerAttack : MonoBehaviour
     private float attackCooldownTracker;
 
     // Attack Trackers
-    private bool canAttack;
     private bool attackHold;
 
     private void Awake()
     {
+        // Component References
         anim = GetComponent<Animator>();
 
+        // Setup Input
         input = new PlayerInputActions();
         input.Game.Attack.performed += AttackInput;
         input.Game.Attack.canceled += ctx => attackHold = false;
 
-        canAttack = true;
+        // Default values
         attackCooldownTracker = stats.attackCooldown;
     }
 
     private void AttackInput(InputAction.CallbackContext ctx)
     {
-        attackHold = true;
+        attackHold = true; // Used so the button can be held down instead of repeatedly pressed
         Attack();
     }
 
+    // Damage and effects are dealt with by the animation via keys
     private void Attack() {
-        if (!canAttack) return;
+        // Done indivdually for no particular reason
+        if (!stats.hasWeapon) return; // Player must have a weapon to attack
         if (anim.GetBool("Attack")) return;
-        //anim.SetBool("Attack");
-        canAttack = false;
+        anim.SetBool("Attack", true); // Animation will set parameter to false
     }
 
     private void FixedUpdate() {
-        AttackCooldown();
-
         AttackHold();
     }
 
-    private void AttackCooldown() {
-        if (canAttack) return;
-        if (attackCooldownTracker <= 0) {
-            attackCooldownTracker = stats.attackCooldown;
-            canAttack = true;
-            return;
-        }
-        attackCooldownTracker--;
-    }
-
     private void AttackHold() {
-        if (!canAttack) return;
         if (!attackHold) return;
 
         Attack();
