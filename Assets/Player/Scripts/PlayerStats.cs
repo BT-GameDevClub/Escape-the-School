@@ -6,6 +6,7 @@ public class PlayerStats : ScriptableObject {
     [Header("Basic Stats")]
     public float movementSpeed;
     public float jumpSpeed;
+    public float attackCooldown;
 
     [Header("Modifiers")]
     public float jumpMoveSpeedReductionModifier;

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementSpeed: 2.75
   jumpSpeed: 8
+  attackCooldown: 10
   jumpMoveSpeedReductionModifier: 0.5
   doubleJump: 1
   doubleJumpSpeed: 7
