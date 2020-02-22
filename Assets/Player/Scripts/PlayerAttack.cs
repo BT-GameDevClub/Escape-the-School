@@ -21,6 +21,7 @@ public class PlayerAttack : MonoBehaviour
 
     private void Attack(InputAction.CallbackContext ctx)
     {
-        //anim.SetBool("Move")
+        if (anim.GetBool("Attack")) return;
+        //anim.SetBool("Attack");
     }
 }

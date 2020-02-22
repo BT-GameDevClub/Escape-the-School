@@ -15,7 +15,8 @@ public class PlayerMovement : MonoBehaviour
     public float distanceToJump;
     public float inputHoldTime;
 
-    [Header("Debug Options")]
+    [Header("Raycast Options")]
+    public float width;
     public bool showRays;
 
     // Component References
@@ -28,8 +29,10 @@ public class PlayerMovement : MonoBehaviour
     private float jumpInput;
     private bool jumpInputHold;
     private float jumpInputHoldTime;
+    private float jumpDirection;
 
     // Movement Trackers
+    private bool touchingGround;
     private bool jumpPerformed;
     private bool doubleJumpPerformed;
 
@@ -68,6 +71,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // Ground Check
+        touchingGround = onGround();
+
         // Input Hold
         DoubleJumpHold();
 
@@ -80,8 +86,12 @@ public class PlayerMovement : MonoBehaviour
     {
         // Uses the previous input to check if both are empty. If so, don't apply a velocity.
         if (movementInput[1] == 0 && movementInput[0] == 0) return;
-        rb.velocity = new Vector2(movementInput[0] * stats.movementSpeed, rb.velocity.y);
         movementInput[1] = movementInput[0];
+        if (movementInput[0] == 0 && !touchingGround) return;
+        float speed = stats.movementSpeed;
+        if (!touchingGround && movementInput[0] != jumpDirection) speed *= stats.jumpMoveSpeedReductionModifier;
+
+        rb.velocity = new Vector2(movementInput[0] * speed, rb.velocity.y);
     }
 
     private void Jump()
@@ -91,7 +101,7 @@ public class PlayerMovement : MonoBehaviour
         // Check to reset jump trackers once landing
         if (jumpPerformed || doubleJumpPerformed)
         {
-            if (onGround())
+            if (touchingGround)
             {
                 jumpPerformed = false;
                 doubleJumpPerformed = false;
@@ -100,7 +110,7 @@ public class PlayerMovement : MonoBehaviour
 
         // Jump Checks
         if (jumpInput == 0) return;
-        if (!onGround())
+        if (!touchingGround)
         {
             if (!stats.doubleJump) return;
             if (doubleJumpPerformed) return;
@@ -113,7 +123,8 @@ public class PlayerMovement : MonoBehaviour
             jumpPerformed = true;
             jumpInputHold = true;
         }
-
+        
+        jumpDirection = movementInput[0];
         rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
 
         // Setup for jump hold
@@ -140,7 +151,7 @@ public class PlayerMovement : MonoBehaviour
         // Checks if the player is on the ground. Allows for multiple rays since the player might be slightly off the edge.
         for (int i = 0; i < jumpChecks; i++)
         {
-            if (Physics2D.Raycast(new Vector2((transform.position.x + transform.localScale.x / jumpChecks * i) - transform.localScale.x / 2 - transform.localScale.x / jumpChecks / 2, transform.position.y), Vector2.down, distanceToJump, 1 << LayerMask.NameToLayer("Interactable"))) return true;
+            if (Physics2D.Raycast(new Vector2((transform.position.x + width / jumpChecks * i) - width / 2 - width / jumpChecks / 2, transform.position.y), Vector2.down, distanceToJump, 1 << LayerMask.NameToLayer("Interactable"))) return true;
         }
         return false;
     }
@@ -152,7 +163,7 @@ public class PlayerMovement : MonoBehaviour
 
         for (int i = 1; i <= jumpChecks; i++)
         {
-            Gizmos.DrawLine(new Vector2((transform.position.x + transform.localScale.x / jumpChecks * i) - transform.localScale.x / 2 - transform.localScale.x / jumpChecks / 2, transform.position.y), new Vector2((transform.position.x + transform.localScale.x / jumpChecks * i) - transform.localScale.x / 2 - transform.localScale.x / jumpChecks / 2, transform.position.y - distanceToJump));
+            Gizmos.DrawLine(new Vector2((transform.position.x + width / jumpChecks * i) - width / 2 - width / jumpChecks / 2, transform.position.y), new Vector2((transform.position.x + width / jumpChecks * i) - width / 2 - width / jumpChecks / 2, transform.position.y - distanceToJump));
         }
     }
 

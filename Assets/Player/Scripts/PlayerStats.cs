@@ -7,6 +7,9 @@ public class PlayerStats : ScriptableObject {
     public float movementSpeed;
     public float jumpSpeed;
 
+    [Header("Modifiers")]
+    public float jumpMoveSpeedReductionModifier;
+
     [Header("Upgrades")]
     public bool doubleJump;
 
