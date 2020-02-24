@@ -116,6 +116,9 @@ public class PlayerMovement : MonoBehaviour
             if (doubleJumpPerformed) return;
             jumpSpeed = stats.doubleJumpSpeed;
             doubleJumpPerformed = true;
+
+            // x velocity of second jump should be in the direction being held
+            rb.velocity = new Vector2(movementInput[0] * stats.movementSpeed, rb.velocity.y);
         }
         else
         {
