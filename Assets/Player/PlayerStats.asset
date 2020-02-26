@@ -15,6 +15,10 @@ MonoBehaviour:
   movementSpeed: 2.75
   jumpSpeed: 8
   attackCooldown: 10
+  weaponRadius: 1.01
+  weaponOffset: {x: 8, y: 2.425, z: 0}
+  weaponSize: {x: 1, y: 0.1, z: 0}
+  weaponAttack: 1
   jumpMoveSpeedReductionModifier: 0.5
   hasWeapon: 1
   doubleJump: 1

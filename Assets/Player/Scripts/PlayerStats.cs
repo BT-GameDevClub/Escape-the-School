@@ -7,6 +7,8 @@ public class PlayerStats : ScriptableObject {
     public float movementSpeed;
     public float jumpSpeed;
     public float attackCooldown;
+    public float weaponRadius;
+    public float weaponAttack;
 
     [Header("Modifiers")]
     public float jumpMoveSpeedReductionModifier;

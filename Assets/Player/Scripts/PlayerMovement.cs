@@ -19,9 +19,13 @@ public class PlayerMovement : MonoBehaviour
     public float width;
     public bool showRays;
 
+    [Header("Player Parts")]
+    public Transform weaponHolderParent;
+
     // Component References
     private Rigidbody2D rb;
     private Animator anim;
+    private SpriteRenderer sprite;
 
     // Input Trackers
     private PlayerInputActions input;
@@ -36,12 +40,11 @@ public class PlayerMovement : MonoBehaviour
     private bool jumpPerformed;
     private bool doubleJumpPerformed;
 
-
-
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        sprite = GetComponent<SpriteRenderer>();
 
         // Setup for the new Input System
         input = new PlayerInputActions();
@@ -92,6 +95,20 @@ public class PlayerMovement : MonoBehaviour
         if (!touchingGround && movementInput[0] != jumpDirection) speed *= stats.jumpMoveSpeedReductionModifier;
 
         rb.velocity = new Vector2(movementInput[0] * speed, rb.velocity.y);
+
+        // Flip X
+        bool flipChange = true;
+
+        if (sprite.flipX && movementInput[0] == 1) sprite.flipX = false;
+        else if (!sprite.flipX && movementInput[1] == -1) sprite.flipX = true;
+        else flipChange = false;
+
+        if (flipChange) {
+            weaponHolderParent.localPosition = new Vector3(-weaponHolderParent.localPosition.x, weaponHolderParent.localPosition.y, weaponHolderParent.localPosition.z);
+            float angle = 0;
+            if (sprite.flipX) angle = 60;
+            weaponHolderParent.localEulerAngles = new Vector3(weaponHolderParent.localEulerAngles.x, weaponHolderParent.localEulerAngles.y, angle);
+        }
     }
 
     private void Jump()
@@ -154,7 +171,7 @@ public class PlayerMovement : MonoBehaviour
         // Checks if the player is on the ground. Allows for multiple rays since the player might be slightly off the edge.
         for (int i = 0; i < jumpChecks; i++)
         {
-            if (Physics2D.Raycast(new Vector2((transform.position.x + width / jumpChecks * i) - width / 2 - width / jumpChecks / 2, transform.position.y), Vector2.down, distanceToJump, 1 << LayerMask.NameToLayer("Interactable"))) return true;
+            if (Physics2D.Raycast(new Vector2((transform.position.x + width / jumpChecks * i) - width / 2 - width / jumpChecks / 2, transform.position.y), Vector2.down, distanceToJump)) return true;
         }
         return false;
     }

@@ -8,8 +8,13 @@ public class PlayerAttack : MonoBehaviour
     [Header("Stats")]
     public PlayerStats stats;
 
+    [Header("Player Parts")]
+    public Transform weaponHolder;
+    public Transform weapon;
+
     // Component References
     private Animator anim;
+    private SpriteRenderer sprite;
 
     // Input Trackers
     private PlayerInputActions input;
@@ -22,6 +27,7 @@ public class PlayerAttack : MonoBehaviour
     {
         // Component References
         anim = GetComponent<Animator>();
+        sprite = GetComponent<SpriteRenderer>();
 
         // Setup Input
         input = new PlayerInputActions();
@@ -64,5 +70,15 @@ public class PlayerAttack : MonoBehaviour
     private void OnDisable()
     {
         input.Disable();
+    }
+
+    private void AttackDamage() {
+        int direction = 1;
+        if (sprite.flipX) direction = -1;
+        RaycastHit2D[] rays = Physics2D.RaycastAll(weaponHolder.transform.position, new Vector2(Mathf.Cos(Mathf.Deg2Rad * weaponHolder.eulerAngles.z), Mathf.Sin(Mathf.Deg2Rad*weaponHolder.eulerAngles.z)), stats.weaponRadius, (1 << LayerMask.NameToLayer("Interactable") | 1 << LayerMask.NameToLayer("Enemy")));
+        foreach(RaycastHit2D ray in rays) {
+            ray.transform.GetComponent<EnemyInteraction>().DealDamage(stats.weaponAttack);
+        }
+
     }
 }
