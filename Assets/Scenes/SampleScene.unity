@@ -439,7 +439,7 @@ GameObject:
   - component: {fileID: 1093371099}
   - component: {fileID: 1093371100}
   - component: {fileID: 1093371101}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -729,7 +729,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1510500028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.6, y: -1.88, z: 0}
+  m_LocalPosition: {x: 2.32, y: -1.73, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -784,12 +784,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d99bd0bcb03266d46ba410c8e128b3c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stats: {fileID: 11400000, guid: 04db7912bb3ea884493df5c95e06d453, type: 2}
-  sprite: {fileID: 0}
-  health: 0
-  interactive: 0
-  stunTime: 0
-  flickerRate: 0
 --- !u!61 &1510500034
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -855,6 +849,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stats: {fileID: 11400000, guid: 04db7912bb3ea884493df5c95e06d453, type: 2}
+  showRays: 0
 --- !u!1 &1602321895
 GameObject:
   m_ObjectHideFlags: 0
@@ -970,7 +965,7 @@ GameObject:
   - component: {fileID: 1694559580}
   - component: {fileID: 1694559579}
   - component: {fileID: 1694559581}
-  m_Layer: 8
+  m_Layer: 11
   m_Name: Slope
   m_TagString: Untagged
   m_Icon: {fileID: 0}

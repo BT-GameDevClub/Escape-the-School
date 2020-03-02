@@ -9,6 +9,7 @@ public class EnemyInteraction
     private GameObject self;
     private EnemyManager manager;
     private SpriteRenderer sprite;
+    private Rigidbody2D rb;
 
     // Attack Trackers
     private float health;
@@ -22,6 +23,7 @@ public class EnemyInteraction
         this.stats = stats;
         this.self = self;
         this.manager = manager;
+        rb = self.GetComponent<Rigidbody2D>();
 
         health = stats.health;
         stunTime = stats.stunTime;
@@ -31,12 +33,19 @@ public class EnemyInteraction
 
         sprite = self.GetComponent<SpriteRenderer>();
     }
-    public void Move() {
-        float random = Random.Range("")
+    public void Move(RaycastHit2D player) {
+        float random = Random.Range(0, 1);
+        if (random < stats.moveJumpRatio) {
+            PerformJump(GetPlayerDirection(player));
+
+        }
     }
 
-    public void RandomMove() {
-        
+    public Vector2 GetPlayerDirection(RaycastHit2D player) {
+        if (player == default) return new Vector2(Mathf.RoundToInt(Random.Range(0, 1)), 0);
+        Vector2 direction = player.point - new Vector2(self.transform.position.x, self.transform.position.y);
+        direction.Normalize();
+        return direction;
     }
 
     private void PerformMovement(Vector2 direction) {
@@ -44,10 +53,10 @@ public class EnemyInteraction
     }
 
     private void PerformJump(Vector2 direction) {
-
+        rb.velocity = new Vector2(direction.x * stats.horizontalVerticalJumpRatio * stats.jumpSpeed, (1 - stats.horizontalVerticalJumpRatio) * stats.jumpSpeed);
     }
 
-    public void Attack() {
+    public void Attack(RaycastHit2D player) {
 
     }
 

@@ -75,7 +75,7 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         // Ground Check
-        touchingGround = onGround();
+        touchingGround = GroundCheck.OnGround(transform.position, jumpChecks, width, distanceToJump);
 
         // Input Hold
         DoubleJumpHold();
@@ -164,16 +164,6 @@ public class PlayerMovement : MonoBehaviour
         }
 
         jumpInputHoldTime--;
-    }
-
-    private bool onGround()
-    {
-        // Checks if the player is on the ground. Allows for multiple rays since the player might be slightly off the edge.
-        for (int i = 0; i < jumpChecks; i++)
-        {
-            if (Physics2D.Raycast(new Vector2((transform.position.x + width / jumpChecks * i) - width / 2 - width / jumpChecks / 2, transform.position.y), Vector2.down, distanceToJump)) return true;
-        }
-        return false;
     }
 
     private void OnDrawGizmos()
