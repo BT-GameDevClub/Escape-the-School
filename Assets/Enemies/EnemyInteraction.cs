@@ -1,13 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class EnemyInteraction : MonoBehaviour
+public class EnemyInteraction
 {
     [Header("Stats")]
     public EnemyStats stats;
 
     // Component References
+    private GameObject self;
+    private EnemyManager manager;
     private SpriteRenderer sprite;
 
     // Attack Trackers
@@ -18,20 +18,32 @@ public class EnemyInteraction : MonoBehaviour
     private float stunTime;
     private float flickerRate;
 
-    private void Awake() {
+    public EnemyInteraction(EnemyManager manager, EnemyStats stats, GameObject self) {
+        this.stats = stats;
+        this.self = self;
+        this.manager = manager;
+
         health = stats.health;
         stunTime = stats.stunTime;
         flickerRate = stats.flickerRate;
 
         interactive = true;
 
-        sprite = GetComponent<SpriteRenderer>();
+        sprite = self.GetComponent<SpriteRenderer>();
     }
-    public void Move(Vector2 direction) {
+    public void Move() {
+        float random = Random.Range("")
+    }
+
+    public void RandomMove() {
         
     }
 
-    public void Jump() {
+    private void PerformMovement(Vector2 direction) {
+
+    }
+
+    private void PerformJump(Vector2 direction) {
 
     }
 
@@ -46,7 +58,7 @@ public class EnemyInteraction : MonoBehaviour
         health -= damage;
         if (health <= 0) {
             // Play Animation, call KillEnemy() as a keyed event
-            KillEnemy();
+            manager.Kill();
         }
     }
 
@@ -80,8 +92,5 @@ public class EnemyInteraction : MonoBehaviour
         stunTime-= Time.deltaTime;
     }
 
-    private void KillEnemy() {
-        Destroy(gameObject);
-    }
 
 }

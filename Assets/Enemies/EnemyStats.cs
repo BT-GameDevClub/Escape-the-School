@@ -9,10 +9,15 @@ public class EnemyStats : ScriptableObject {
 
     [Header("Attack Stats")]
     public float health;
+    public float range;
+    public float height;
 
     [Header("Stun Stats")]
     public float stunTime;
     public float stunKnockback;
     public float flickerRate;
+
+    [Header("Additional Stats")]
+    public float timeBetweenActions;
     
 }

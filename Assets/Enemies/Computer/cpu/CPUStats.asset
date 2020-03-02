@@ -15,6 +15,8 @@ MonoBehaviour:
   movementSpeed: 1
   jumpSpeed: 1
   health: 10
+  range: 10
+  height: 2
   stunTime: 1.5
   stunKnockback: 0
   flickerRate: 0.1
