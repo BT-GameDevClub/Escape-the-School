@@ -49,12 +49,15 @@ public class EnemyManager : MonoBehaviour
         }
 
         timeBetweenActions = stats.timeBetweenActions;
-        
     }
 
     private void ActionTimeout() {
         if (timeBetweenActions < 0) return;
         timeBetweenActions-=Time.deltaTime;
+    }
+
+    public void DealDamage(float damage) {
+        interaction.DealDamage(damage);
     }
 
 

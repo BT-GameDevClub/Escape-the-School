@@ -77,7 +77,7 @@ public class PlayerAttack : MonoBehaviour
         if (sprite.flipX) direction = -1;
         RaycastHit2D[] rays = Physics2D.RaycastAll(weaponHolder.transform.position, new Vector2(Mathf.Cos(Mathf.Deg2Rad * weaponHolder.eulerAngles.z), Mathf.Sin(Mathf.Deg2Rad*weaponHolder.eulerAngles.z)), stats.weaponRadius, (1 << LayerMask.NameToLayer("Interactable") | 1 << LayerMask.NameToLayer("Enemy")));
         foreach(RaycastHit2D ray in rays) {
-            ray.transform.GetComponent<EnemyInteraction>().DealDamage(stats.weaponAttack);
+            ray.transform.GetComponent<EnemyManager>().DealDamage(stats.weaponAttack);
         }
 
     }

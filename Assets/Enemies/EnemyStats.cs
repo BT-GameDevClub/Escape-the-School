@@ -18,6 +18,8 @@ public class EnemyStats : ScriptableObject {
     public float moveJumpRatio;
     [Range(0, 1f)]
     public float horizontalVerticalJumpRatio;
+    public Vector2 jumpRandomRange;
+    public float jumpInRange;
 
     [Header("Attack Stats")]
     public float health;
@@ -30,5 +32,6 @@ public class EnemyStats : ScriptableObject {
 
     [Header("Additional Stats")]
     public float timeBetweenActions;
+    public float maxTimeMoving;
     
 }
