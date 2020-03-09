@@ -17,16 +17,20 @@ MonoBehaviour:
   width: 0.83
   jumpChecks: 8
   distanceToGround: 1.24
-  movementSpeed: 8
-  jumpSpeed: 18
-  moveJumpRatio: 0.406
+  movementSpeed: 2.5
+  jumpSpeed: 14
+  moveJumpRatio: 1
+  inRangeWaitChance: 0.228
+  outRangeWaitChance: 0.825
   horizontalVerticalJumpRatio: 0.45
   jumpRandomRange: {x: -2, y: 2}
   jumpInRange: 3
   health: 10
   height: 2
   stunTime: 1.5
-  stunKnockback: 0
+  stunKnockback: 5
   flickerRate: 0.1
-  timeBetweenActions: 3
-  maxTimeMoving: 12
+  timeBetweenActions: 0.5
+  additionalJumpTime: 0.25
+  minTimeMoving: 0.3
+  maxTimeMoving: 0.4

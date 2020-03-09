@@ -16,6 +16,10 @@ public class EnemyStats : ScriptableObject {
     public float jumpSpeed;
     [Range(0, 1f)]
     public float moveJumpRatio;
+    [Range(0,1f)]
+    public float inRangeWaitChance;
+    [Range(0,1f)]
+    public float outRangeWaitChance;
     [Range(0, 1f)]
     public float horizontalVerticalJumpRatio;
     public Vector2 jumpRandomRange;
@@ -32,6 +36,8 @@ public class EnemyStats : ScriptableObject {
 
     [Header("Additional Stats")]
     public float timeBetweenActions;
+    public float additionalJumpTime;
+    public float minTimeMoving;
     public float maxTimeMoving;
     
 }

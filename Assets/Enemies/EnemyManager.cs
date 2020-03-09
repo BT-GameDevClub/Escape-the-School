@@ -25,6 +25,7 @@ public class EnemyManager : MonoBehaviour
     }
 
     private void Update() {
+        interaction.Update();
         InRange();
 
         ActionTimeout();
@@ -33,6 +34,11 @@ public class EnemyManager : MonoBehaviour
     private void InRange() {
         if (timeBetweenActions > 0) return;
         if (!GroundCheck.OnGround(transform.position, 3, 3, stats.distanceToGround)) return;
+        if (interaction.GetJumping()) {
+            interaction.SetJumping(false);
+            AddJumpTime();
+            return;
+        }
         RaycastHit2D rayHit = Physics2D.BoxCast(transform.position, new Vector2(stats.range, stats.height), 0, new Vector2(0, 0), 1, 1 << LayerMask.NameToLayer("Player"));
         if (rayHit) {
             if (Physics2D.BoxCast(transform.position, new Vector2(stats.attackRange, stats.height), 0, new Vector2(0,0), 1, 1 << LayerMask.NameToLayer("Player"))) {
@@ -56,8 +62,13 @@ public class EnemyManager : MonoBehaviour
         timeBetweenActions-=Time.deltaTime;
     }
 
-    public void DealDamage(float damage) {
+    public void DealDamage(Transform player, float damage) {
         interaction.DealDamage(damage);
+        ApplyKnockback(player);
+    }
+
+    private void ApplyKnockback(Transform player) {
+        Vector2 direction = interaction.GetPlayerDirection(player);
     }
 
 
@@ -73,9 +84,14 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
+    public void AddJumpTime() {
+        timeBetweenActions += stats.additionalJumpTime;
+    }
+
     public void UpdatePlayer() {
         player = GameObject.FindGameObjectWithTag("Player");
     }
+    
     public void Kill() {
         Destroy(gameObject);
     }

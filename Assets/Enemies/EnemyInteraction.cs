@@ -21,7 +21,8 @@ public class EnemyInteraction
 
     // Other Trackers
     private Vector2 direction;
-    private bool movementLast;
+    private bool continueMoving;
+    private bool jumping;
 
     public EnemyInteraction(EnemyManager manager, EnemyStats stats, GameObject self) {
         this.stats = stats;
@@ -35,23 +36,21 @@ public class EnemyInteraction
         moveTime = stats.maxTimeMoving;
 
         interactive = true;
+        continueMoving = false;
 
         sprite = self.GetComponent<SpriteRenderer>();
     }
 
     public void Move(RaycastHit2D player) {
         float random = Random.Range(0.00f, 1.00f);
-        Debug.Log(random);
-        if (random < 0.5f) {
-            PerformJump(GetPlayerDirection(player), player);
-        } else if (random >= 0.5f && random <=1f) {
-            PerformMovement(GetPlayerDirection(player));
+        float waitChance = stats.inRangeWaitChance;
+        if (player == default) {
+            waitChance = stats.outRangeWaitChance;
         }
-
-        if (!interactive) {
-            if (random < 0.45f) {
-                ContinueMovement();
-            }
+        if (random < stats.moveJumpRatio * (1 - waitChance)) {
+            PerformJump(GetPlayerDirection(player), player);
+        } else if (random >= stats.moveJumpRatio * (1- waitChance) && random <= (1 - waitChance)) {
+            PerformMovement(GetPlayerDirection(player));
         }
     }
 
@@ -70,13 +69,16 @@ public class EnemyInteraction
     private void PerformMovement(Vector2 direction) {
         if (!interactive) return;
         this.direction = direction;
-        movementLast = true;
+        continueMoving = true;
+        moveTime = Random.Range(stats.minTimeMoving, stats.maxTimeMoving);
 
         ContinueMovement();
     }
 
     private void ContinueMovement() {
-        if (!movementLast) return;
+        Debug.Log("<b>Continue Moving:</b> " + continueMoving);
+        Debug.Log("<b>Move Time:</b> " + moveTime);
+        if (!continueMoving) return;
         if (moveTime <= 0) return;
         rb.velocity = Vector2.right * direction.x * stats.movementSpeed;
     }
@@ -95,7 +97,7 @@ public class EnemyInteraction
         if (player != default) {
             if ((Mathf.Abs(self.transform.position.x - player.transform.position.x) - stats.jumpInRange) < xSpeed*time) {
                 xSpeed = Mathf.Abs(self.transform.position.x - player.transform.position.x)/time;
-                xSpeed += Random.Range(stats.jumpRandomRange.x,stats.jumpRandomRange.y);
+                xSpeed += Random.Range(-stats.jumpRandomRange.x,stats.jumpRandomRange.y);
                 xSpeed = xSpeed > stats.jumpSpeed ? stats.jumpSpeed : xSpeed;
             }
         } else {
@@ -105,7 +107,7 @@ public class EnemyInteraction
         // Apply Movement
         rb.velocity = new Vector2(xSpeed*direction.x, ySpeed);
 
-        movementLast = false;
+        jumping = true;
     }
 
     public void Attack(RaycastHit2D player) {
@@ -123,7 +125,9 @@ public class EnemyInteraction
         }
     }
 
-    private void Update() {
+    public void Update() {
+        ContinueMovement();
+
         FlickerUpdate();
         StunUpdate();
         MoveTimeUpdate();
@@ -155,16 +159,21 @@ public class EnemyInteraction
     }
 
     private void MoveTimeUpdate() {
-        if (interactive) { 
-            moveTime = stats.maxTimeMoving;
-            return;
-        }
-        if (moveTime > 0) {
+        if (continueMoving && moveTime > 0) {
             moveTime -= Time.deltaTime;
         }
-        if (Mathf.Abs(rb.velocity.x) < 0.75f * stats.movementSpeed) {
+        if (moveTime < 0) {
             moveTime = 0;
+            continueMoving = false;
         }
+    }
+
+    public bool GetJumping() {
+        return jumping;
+    }
+
+    public void SetJumping(bool jumping) {
+        this.jumping = jumping;
     }
 
 

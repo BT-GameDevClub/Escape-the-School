@@ -76,6 +76,7 @@ public class PlayerMovement : MonoBehaviour
     {
         // Ground Check
         touchingGround = GroundCheck.OnGround(transform.position, jumpChecks, width, distanceToJump);
+        if (touchingGround) anim.SetBool("Jump", false);
 
         // Input Hold
         DoubleJumpHold();
@@ -96,19 +97,7 @@ public class PlayerMovement : MonoBehaviour
 
         rb.velocity = new Vector2(movementInput[0] * speed, rb.velocity.y);
 
-        // Flip X
-        bool flipChange = true;
-
-        if (sprite.flipX && movementInput[0] == 1) sprite.flipX = false;
-        else if (!sprite.flipX && movementInput[1] == -1) sprite.flipX = true;
-        else flipChange = false;
-
-        if (flipChange) {
-            weaponHolderParent.localPosition = new Vector3(-weaponHolderParent.localPosition.x, weaponHolderParent.localPosition.y, weaponHolderParent.localPosition.z);
-            float angle = 0;
-            if (sprite.flipX) angle = 60;
-            weaponHolderParent.localEulerAngles = new Vector3(weaponHolderParent.localEulerAngles.x, weaponHolderParent.localEulerAngles.y, angle);
-        }
+       Flip();
     }
 
     private void Jump()
@@ -133,7 +122,6 @@ public class PlayerMovement : MonoBehaviour
             if (doubleJumpPerformed) return;
             jumpSpeed = stats.doubleJumpSpeed;
             doubleJumpPerformed = true;
-
             // x velocity of second jump should be in the direction being held
             rb.velocity = new Vector2(movementInput[0] * stats.movementSpeed, rb.velocity.y);
         }
@@ -150,6 +138,9 @@ public class PlayerMovement : MonoBehaviour
         // Setup for jump hold
         jumpInput = 0;
         jumpInputHoldTime = inputHoldTime;
+
+        anim.SetBool("Jump", true);
+        Flip(true);
     }
 
     private void DoubleJumpHold()
@@ -164,6 +155,23 @@ public class PlayerMovement : MonoBehaviour
         }
 
         jumpInputHoldTime--;
+    }
+
+    private void Flip(bool ignoreGround = false) {
+        if (!touchingGround && !ignoreGround) return;
+        // Flip X
+        bool flipChange = true;
+ 
+        if (sprite.flipX && movementInput[0] == 1) sprite.flipX = false;
+        else if (!sprite.flipX && movementInput[1] == -1) sprite.flipX = true;
+        else flipChange = false;
+
+        if (flipChange) {
+            weaponHolderParent.localPosition = new Vector3(-weaponHolderParent.localPosition.x, weaponHolderParent.localPosition.y, weaponHolderParent.localPosition.z);
+            float angle = 0;
+            if (sprite.flipX) angle = 60;
+            weaponHolderParent.localEulerAngles = new Vector3(weaponHolderParent.localEulerAngles.x, weaponHolderParent.localEulerAngles.y, angle);
+        }
     }
 
     private void OnDrawGizmos()
