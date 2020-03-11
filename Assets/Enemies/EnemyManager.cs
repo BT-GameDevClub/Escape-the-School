@@ -8,7 +8,7 @@ public class EnemyManager : MonoBehaviour
 {
     [Header("Stats")]
     public EnemyStats stats;
-
+    
     [Header("Debug Options")]
     public bool showRays;
 
@@ -34,8 +34,8 @@ public class EnemyManager : MonoBehaviour
     private void InRange() {
         if (timeBetweenActions > 0) return;
         if (!GroundCheck.OnGround(transform.position, 3, 3, stats.distanceToGround)) return;
-        if (interaction.GetJumping()) {
-            interaction.SetJumping(false);
+        if (interaction.GetState() == EnemyState.JUMP) {
+            interaction.SetState(EnemyState.IDLE);
             AddJumpTime();
             return;
         }
@@ -63,12 +63,7 @@ public class EnemyManager : MonoBehaviour
     }
 
     public void DealDamage(Transform player, float damage) {
-        interaction.DealDamage(damage);
-        ApplyKnockback(player);
-    }
-
-    private void ApplyKnockback(Transform player) {
-        Vector2 direction = interaction.GetPlayerDirection(player);
+        interaction.DealDamage(player, damage);
     }
 
 

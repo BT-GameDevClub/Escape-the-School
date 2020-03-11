@@ -52,6 +52,10 @@ public class PlayerAttack : MonoBehaviour
         anim.SetBool("Attack", true); // Animation will set parameter to false
     }
 
+    private void EndAttack() {
+        anim.SetBool("Attack", false);  
+    }
+
     private void FixedUpdate() {
         AttackHold();
     }
