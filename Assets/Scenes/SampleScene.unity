@@ -663,6 +663,7 @@ GameObject:
   - component: {fileID: 1510500034}
   - component: {fileID: 1510500032}
   - component: {fileID: 1510500036}
+  - component: {fileID: 1510500033}
   m_Layer: 9
   m_Name: cpu
   m_TagString: Untagged
@@ -709,12 +710,13 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: d51042f731a04ed4fa943826336d03eb, type: 3}
+  m_Sprite: {fileID: 2386623299969096829, guid: 5f412efefa714ac428fa2d80b43310ac,
+    type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.64, y: 0.64}
+  m_Size: {x: 2, y: 2}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -771,6 +773,25 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 1
+--- !u!95 &1510500033
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1510500028}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 80973c5740871c441834164064697554, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!61 &1510500034
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -789,7 +810,7 @@ BoxCollider2D:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 2, y: 2}
-    newSize: {x: 0.64, y: 0.64}
+    newSize: {x: 2, y: 2}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -815,7 +836,7 @@ BoxCollider2D:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 2, y: 2}
-    newSize: {x: 0.64, y: 0.64}
+    newSize: {x: 2, y: 2}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -1434,6 +1455,11 @@ PrefabInstance:
       propertyPath: weaponHolderParent
       value: 
       objectReference: {fileID: 1110783984}
+    - target: {fileID: 4111424756664439137, guid: c10181db52b7021489ff103116f33c3a,
+        type: 3}
+      propertyPath: distanceToJump
+      value: 0.74
+      objectReference: {fileID: 0}
     - target: {fileID: 4111424756664439139, guid: c10181db52b7021489ff103116f33c3a,
         type: 3}
       propertyPath: m_Size.x

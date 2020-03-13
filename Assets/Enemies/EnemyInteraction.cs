@@ -4,14 +4,15 @@ public class EnemyInteraction
 {
     public EnemyStats stats;
 
-    // Interaction State
-    private EnemyState state;
+    // Interaction State Manager
+    private EnemyStateManager state;
 
     // Component References
     private GameObject self;
     private EnemyManager manager;
     private SpriteRenderer sprite;
     private Rigidbody2D rb;
+    private Animator anim;
 
     // Attack Trackers
     private float health;
@@ -22,16 +23,22 @@ public class EnemyInteraction
     private float flickerRate;
     private float moveTime;
 
+    // Jump Instance Trackers
+    private RaycastHit2D player;
+    private Vector2 playerDirection;
+
     // Other Trackers
     private Vector2 direction;
     private bool continueMoving;
     private bool jumping;
 
-    public EnemyInteraction(EnemyManager manager, EnemyStats stats, GameObject self) {
+    public EnemyInteraction(EnemyManager manager, EnemyStats stats, GameObject self, EnemyStateManager stateManager) {
         this.stats = stats;
         this.self = self;
         this.manager = manager;
+        state = stateManager;
         rb = self.GetComponent<Rigidbody2D>();
+        anim = self.GetComponent<Animator>();
 
         health = stats.health;
         stunTime = stats.stunTime;
@@ -40,13 +47,13 @@ public class EnemyInteraction
 
         interactive = true;
         continueMoving = false;
-        state = EnemyState.IDLE;
+        state.SetState(EnemyState.IDLE);
 
         sprite = self.GetComponent<SpriteRenderer>();
     }
 
     public void Move(RaycastHit2D player) {
-        if (state != EnemyState.IDLE) return;
+        if (state.GetState() != EnemyState.IDLE) return;
 
         float random = Random.Range(0.00f, 1.00f);
         float waitChance = stats.inRangeWaitChance;
@@ -91,48 +98,60 @@ public class EnemyInteraction
         continueMoving = true;
         moveTime = Random.Range(stats.minTimeMoving, stats.maxTimeMoving);
 
-        state = EnemyState.WALK;
+        state.SetState(EnemyState.WALK);
 
         ContinueMovement();
     }
 
     private void ContinueMovement() {
-        if (state != EnemyState.WALK) return;
+        if (state.GetState() == EnemyState.WALK) return;
         if (!continueMoving) return;
         if (moveTime <= 0) return;
         rb.velocity = Vector2.right * direction.x * stats.movementSpeed;
     }
 
     private void PerformJump(Vector2 direction, RaycastHit2D player) {
+        playerDirection = direction;
+        this.player = player;
+
+        state.SetState(EnemyState.JUMPSTART);
+    }
+
+    public void ApplyJump() {
         // Get Angle
         float xAngle = stats.horizontalVerticalJumpRatio;
-        float yAngle = 1-stats.horizontalVerticalJumpRatio;
+        float yAngle = 1 - stats.horizontalVerticalJumpRatio;
 
         // Time for jump
         float ySpeed = yAngle * stats.jumpSpeed;
-        float time = ySpeed/Physics2D.gravity.y;
+        float time = ySpeed / Physics2D.gravity.y;
 
         // Horizotal Speed Needed
         float xSpeed = xAngle * stats.jumpSpeed;
-        if (player != default) {
-            if ((Mathf.Abs(self.transform.position.x - player.transform.position.x) - stats.jumpInRange) < xSpeed*time) {
-                xSpeed = Mathf.Abs(self.transform.position.x - player.transform.position.x)/time;
-                xSpeed += Random.Range(-stats.jumpRandomRange.x,stats.jumpRandomRange.y);
+        if (player != default)
+        {
+            if ((Mathf.Abs(self.transform.position.x - player.transform.position.x) - stats.jumpInRange) < xSpeed * time)
+            {
+                xSpeed = Mathf.Abs(self.transform.position.x - player.transform.position.x) / time;
+                xSpeed += Random.Range(-stats.jumpRandomRange.x, stats.jumpRandomRange.y);
                 xSpeed = xSpeed > stats.jumpSpeed ? stats.jumpSpeed : xSpeed;
             }
-        } else {
+        }
+        else
+        {
             xSpeed += Random.Range(stats.jumpRandomRange.x, stats.jumpRandomRange.y);
         }
-        
-        // Apply Movement
-        rb.velocity = new Vector2(xSpeed*direction.x, ySpeed);
 
-        state = EnemyState.JUMP;
+        // Apply Movement
+        rb.velocity = new Vector2(xSpeed * playerDirection.x, ySpeed);
+
+        state.SetState(EnemyState.JUMP);
+        player = default;
+        playerDirection = Vector2.zero;
     }
 
     public void Attack(RaycastHit2D player) {
-        // This is just an animation
-        state = EnemyState.ATTACK;
+        state.SetState(EnemyState.ATTACK);
     }
 
     public void DealDamage(Transform player, float damage) {
@@ -142,10 +161,10 @@ public class EnemyInteraction
         health -= damage;
         if (health <= 0) {
             // Play Animation, call KillEnemy() as a keyed event
-            state = EnemyState.KILL;
+            state.SetState(EnemyState.KILL);
             manager.Kill();
         } else {
-            state = EnemyState.STUN;
+            state.SetState(EnemyState.STUN);
             Knockback(GetPlayerDirection(player));
         }
     }
@@ -181,7 +200,7 @@ public class EnemyInteraction
             stunTime = stats.stunTime;
             flickerRate = stats.flickerRate;
             sprite.enabled = true;
-            state = EnemyState.IDLE;
+            state.SetState(EnemyState.IDLE);
             return;
         }
 
@@ -196,14 +215,6 @@ public class EnemyInteraction
             moveTime = 0;
             continueMoving = false;
         }
-    }
-
-    public EnemyState GetState() {
-        return state;
-    }
-
-    public void SetState(EnemyState state) {
-        this.state = state;
     }
 
 

@@ -28,7 +28,7 @@ MonoBehaviour:
   health: 10
   height: 2
   stunTime: 1.5
-  stunKnockback: 20
+  stunKnockback: 5
   flickerRate: 0.1
   timeBetweenActions: 0.5
   additionalJumpTime: 0.25

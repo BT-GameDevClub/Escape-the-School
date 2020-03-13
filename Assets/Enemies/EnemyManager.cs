@@ -4,6 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(Animator))]
 public class EnemyManager : MonoBehaviour
 {
     [Header("Stats")]
@@ -13,6 +14,7 @@ public class EnemyManager : MonoBehaviour
     public bool showRays;
 
     private EnemyInteraction interaction;
+    private EnemyStateManager stateManager;
 
     private static GameObject player;
 
@@ -20,7 +22,8 @@ public class EnemyManager : MonoBehaviour
     private float timeBetweenActions;
 
     private void Awake() {
-        interaction = new EnemyInteraction(this, stats, gameObject);
+        stateManager = new EnemyStateManager(this, gameObject);
+        interaction = new EnemyInteraction(this, stats, gameObject, stateManager);
         if (player == null) UpdatePlayer();
     }
 
@@ -32,13 +35,15 @@ public class EnemyManager : MonoBehaviour
     }
 
     private void InRange() {
-        if (timeBetweenActions > 0) return;
         if (!GroundCheck.OnGround(transform.position, 3, 3, stats.distanceToGround)) return;
-        if (interaction.GetState() == EnemyState.JUMP) {
-            interaction.SetState(EnemyState.IDLE);
+        if (stateManager.GetState() == EnemyState.JUMP) {
+            stateManager.SetState(EnemyState.JUMPEND);
             AddJumpTime();
             return;
         }
+
+        stateManager.SetState(EnemyState.IDLE);
+        if (timeBetweenActions > 0) return;
         RaycastHit2D rayHit = Physics2D.BoxCast(transform.position, new Vector2(stats.range, stats.height), 0, new Vector2(0, 0), 1, 1 << LayerMask.NameToLayer("Player"));
         if (rayHit) {
             if (Physics2D.BoxCast(transform.position, new Vector2(stats.attackRange, stats.height), 0, new Vector2(0,0), 1, 1 << LayerMask.NameToLayer("Player"))) {
@@ -58,14 +63,13 @@ public class EnemyManager : MonoBehaviour
     }
 
     private void ActionTimeout() {
-        if (timeBetweenActions < 0) return;
+        if (timeBetweenActions < 0 || stateManager.GetState() == EnemyState.JUMPSTART) return;
         timeBetweenActions-=Time.deltaTime;
     }
 
     public void DealDamage(Transform player, float damage) {
         interaction.DealDamage(player, damage);
     }
-
 
     private void OnDrawGizmos() {
         if (!showRays) return;
@@ -79,6 +83,10 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
+    public void ApplyJump() {
+        interaction.ApplyJump();
+    }
+
     public void AddJumpTime() {
         timeBetweenActions += stats.additionalJumpTime;
     }
@@ -90,6 +98,4 @@ public class EnemyManager : MonoBehaviour
     public void Kill() {
         Destroy(gameObject);
     }
-    
-
 }
